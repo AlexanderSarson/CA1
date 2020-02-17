@@ -1,6 +1,6 @@
 package rest;
 
-import entities.GroupMember;
+import entities.Joke;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -27,11 +27,11 @@ import utils.EMF_Creator.Strategy;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class GroupResourceTest {
+public class JokeResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static GroupMember r1, r2;
+    private static Joke r1, r2;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -68,11 +68,12 @@ public class GroupResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        r1 = new GroupMember("Alexander Sarson", "cph-as485", "red");
-        r2 = new GroupMember("Oscar Laurberg", "cph-ol38", "red");
+        r1 = new Joke("Chuck Norris har talt til uendeligt – To gange endda", "Chuck Norris", "Sjov");
+        r2 = new Joke("Teenage Mutant Ninja Turtles er baseret på en sand historie, Chuck Norris slugte engang en hel skildpadde, og da den kom ud igen var den 2 meter høj og havde lært karate", "Chuck Norris", "Sjov");
+
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("GroupMember.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
             em.getTransaction().commit();
@@ -86,28 +87,16 @@ public class GroupResourceTest {
         System.out.println("Testing is server UP");
         given()
                 .when()
-                .get("/groupmembers")
+                .get("/jokes")
                 .then()
                 .statusCode(200);
     }
 
-    //This test assumes the database contains two rows
     @Test
-    public void testDummyMsg() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/groupmembers/")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("msg", equalTo("Hello World"));
-    }
-
-    @Test
-    public void testGetAllGroupMembers() {
+    public void testGetAllJokes() {
         given()
                 .contentType(ContentType.JSON)
-                .get("/groupmembers/all")
+                .get("/jokes/all")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -115,21 +104,74 @@ public class GroupResourceTest {
     }
     
     @Test
-    public void testGetAllGroupMembersNotFound(){
+    public void testGetAllJokesNotFound(){
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("GroupMember.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
         }
         given()
                 .contentType(ContentType.JSON)
-                .get("/groupmembers/all")
+                .get("/jokes/all")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
-                .body("msg", equalTo("Members not found"));
+                .body("msg", equalTo("Jokes not found"));
+    }
+    
+    @Test
+    public void testGetJokeById(){
+        int expectedId = r1.getId().intValue();
+        given()
+                .contentType(ContentType.JSON)
+                .get("jokes/id/" + expectedId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("id", is(expectedId));
+    }
+    
+    @Test
+    public void testGetJokeByIdNotFound(){
+        int expectedId = -1;
+        given()
+                .contentType(ContentType.JSON)
+                .get("jokes/id/" + expectedId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("msg", equalTo("Joke not found"));
+    }
+    
+    @Test
+    public void testGetRandomJoke(){
+        given()
+                .contentType(ContentType.JSON)
+                .get("/jokes/random")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
+    
+    @Test
+    public void testGetRandomJokeNotFound(){
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        given()
+                .contentType(ContentType.JSON)
+                .get("/jokes/random")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("msg", equalTo("Joke not found"));
     }
 }

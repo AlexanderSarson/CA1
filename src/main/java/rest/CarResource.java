@@ -2,8 +2,8 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import entities.dto.GroupDTO;
-import facades.FacadeGroup;
+import entities.dto.CarDTO;
+import facades.FacadeCar;
 import utils.EMF_Creator;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 //Todo Remove or change relevant parts before ACTUAL use
-@Path("groupmembers")
-public class GroupResource {
+@Path("cars")
+public class CarResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(
                 "pu",
@@ -28,7 +28,7 @@ public class GroupResource {
                 "dev",
                 "ax2",
                 EMF_Creator.Strategy.CREATE);
-    private static final FacadeGroup FACADE =  FacadeGroup.getFacadeGroup(EMF);
+    private static final FacadeCar FACADE =  FacadeCar.getFacadeCar(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
             
     @GET
@@ -40,8 +40,8 @@ public class GroupResource {
     @Path("/all")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getAllGroupMembers() {
-        List<GroupDTO> groupMembers = FACADE.getAllGroupMembersDTO();
+    public Response getAllCars() {
+        List<CarDTO> groupMembers = FACADE.getAllCarsDTO();
         if(groupMembers.size() > 0){
             return Response
                     .status(Response.Status.OK)
@@ -51,7 +51,7 @@ public class GroupResource {
         } else {
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity("{\"msg\":\"Members not found\"}")
+                    .entity("{\"msg\":\"Cars not found\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         }

@@ -1,7 +1,7 @@
 package facades;
 
-import entities.GroupMember;
-import entities.dto.GroupDTO;
+import entities.Car;
+import entities.dto.CarDTO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -14,13 +14,13 @@ import utils.EMF_Creator;
  *
  * Rename Class to a relevant name Add add relevant facade methods
  */
-public class FacadeGroup {
+public class FacadeCar {
 
-    private static FacadeGroup instance;
+    private static FacadeCar instance;
     private static EntityManagerFactory emf;
 
     //Private Constructor to ensure Singleton
-    private FacadeGroup() {
+    private FacadeCar() {
     }
 
     /**
@@ -28,10 +28,10 @@ public class FacadeGroup {
      * @param _emf
      * @return an instance of this facade class.
      */
-    public static FacadeGroup getFacadeGroup(EntityManagerFactory _emf) {
+    public static FacadeCar getFacadeCar(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
-            instance = new FacadeGroup();
+            instance = new FacadeCar();
         }
         return instance;
     }
@@ -40,13 +40,13 @@ public class FacadeGroup {
         return emf.createEntityManager();
     }
 
-    public List<GroupDTO> getAllGroupMembersDTO() {
+    public List<CarDTO> getAllCarsDTO() {
         EntityManager em = getEntityManager();
-        List<GroupDTO> groupMembersDTO = new ArrayList<>();
+        List<CarDTO> CarsDTO = new ArrayList<>();
         try {
-            TypedQuery<GroupMember> tp = em.createQuery("SELECT g FROM GroupMember g", GroupMember.class);
-            tp.getResultList().forEach((member) -> groupMembersDTO.add(new GroupDTO(member)));
-            return groupMembersDTO;
+            TypedQuery<Car> tp = em.createQuery("SELECT c FROM Car c", Car.class);
+            tp.getResultList().forEach((car) -> CarsDTO.add(new CarDTO(car)));
+            return CarsDTO;
         } finally {
             em.close();
         }
@@ -59,11 +59,12 @@ public class FacadeGroup {
                 "dev",
                 "ax2",
                 EMF_Creator.Strategy.CREATE);
-        GroupMember r1, r2, r3, r4;
-        r1 = new GroupMember("Alexander Sarson", "cph-as485", "red");
-        r2 = new GroupMember("Oscar Laurberg", "cph-ol38", "red");
-        r3 = new GroupMember("Mads Brandt", "cph-ol38", "red");
-        r4 = new GroupMember("Benjamin Paprika", "cph-ol38", "red");
+        Car r1, r2, r3, r4,r5;
+        r1 = new Car(1997, "Ford", "E350", 3000, "Alexander");
+        r2 = new Car(1999, "Chevy", "Venture", 4900, "Alexander");
+        r3 = new Car(2000, "Chevy", "Venture", 5000, "Alexander");
+        r4 = new Car(1996, "Jeep", "Grand Cherokee", 4799, "Alexander");
+        r5 = new Car(2005, "Volvo", "V70", 44799, "Alexander");
         EntityManager em = EMF.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -71,6 +72,7 @@ public class FacadeGroup {
             em.persist(r2);
             em.persist(r3);
             em.persist(r4);
+            em.persist(r5);
             em.getTransaction().commit();
         } finally {
             em.close();

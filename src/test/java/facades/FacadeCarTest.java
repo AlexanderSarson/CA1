@@ -1,7 +1,7 @@
 package facades;
 
-import entities.GroupMember;
-import entities.dto.GroupDTO;
+import entities.Car;
+import entities.dto.CarDTO;
 import java.util.List;
 import utils.EMF_Creator;
 import javax.persistence.EntityManager;
@@ -19,13 +19,13 @@ import utils.EMF_Creator.Strategy;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class FacadeGroupTest {
+public class FacadeCarTest {
 
     private static EntityManagerFactory emf;
-    private static FacadeGroup facade;
-    private static GroupMember r1, r2;
+    private static FacadeCar facade;
+    private static Car r1, r2;
 
-    public FacadeGroupTest() {
+    public FacadeCarTest() {
     }
 
     /*   **** HINT **** 
@@ -37,7 +37,7 @@ public class FacadeGroupTest {
     @BeforeAll
     public static void setUpClassV2() {
        emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
-       facade = FacadeGroup.getFacadeGroup(emf);
+       facade = FacadeCar.getFacadeCar(emf);
     }
 
     // Setup the DataBase in a known state BEFORE EACH TEST
@@ -45,11 +45,11 @@ public class FacadeGroupTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        r1 = new GroupMember("Alexander Sarson", "cph-as485", "red");
-        r2 = new GroupMember("Oscar Laurberg", "cph-ol38", "red");
+        r1 = new Car(1997, "Ford", "E350", 3000, "Alexander");
+        r2 = new Car(1999, "Chevy", "Venture", 4900, "Alexander");
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("GroupMember.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Car.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
             em.getTransaction().commit();
@@ -60,10 +60,10 @@ public class FacadeGroupTest {
 
     @Test
     public void testGetAllGroupMembers() {
-        List<GroupDTO> groupMembers = facade.getAllGroupMembersDTO();
-        int expectedNumberOfMembers = 2;
-        int resultNumberOfMembers = groupMembers.size();
-        assertEquals(expectedNumberOfMembers, resultNumberOfMembers);
+        List<CarDTO> cars = facade.getAllCarsDTO();
+        int expectedNumberOfCars = 2;
+        int resultNumberOfCars = cars.size();
+        assertEquals(expectedNumberOfCars, resultNumberOfCars);
     }
 
 }
