@@ -11,6 +11,7 @@ import entities.Joke;
 import facades.FacadeJoke;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
@@ -31,14 +32,9 @@ import utils.EMF_Creator;
 @Path("jokes")
 public class JokeResource {
     
-    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3306/CA1",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
-    private static final FacadeJoke FACADE =  FacadeJoke.getFacadeJoke(EMF);
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("pu"); 
+    private final FacadeJoke FACADE =  FacadeJoke.getFacadeJoke(EMF);
+    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})

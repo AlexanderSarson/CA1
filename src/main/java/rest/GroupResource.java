@@ -8,6 +8,7 @@ import utils.EMF_Creator;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,14 +23,9 @@ import javax.ws.rs.core.Response;
 @Path("groupmembers")
 public class GroupResource {
 
-    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3306/CA1",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
-    private static final FacadeGroup FACADE =  FacadeGroup.getFacadeGroup(EMF);
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("pu"); 
+    private final FacadeGroup FACADE =  FacadeGroup.getFacadeGroup(EMF);
+    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
             
     @GET
     @Produces({MediaType.APPLICATION_JSON})
