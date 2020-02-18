@@ -18,31 +18,31 @@ import javax.ws.rs.core.Response;
 public class GroupResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3306/CA1",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
-    private static final FacadeGroup FACADE =  FacadeGroup.getFacadeGroup(EMF);
+            "pu",
+            "jdbc:mysql://localhost:3306/CA1",
+            "dev",
+            "ax2",
+            EMF_Creator.Strategy.CREATE);
+    private static final FacadeGroup FACADE = FacadeGroup.getFacadeGroup(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-            
+
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String demo() {
         return "{\"msg\":\"Hello World\"}";
     }
-    
+
     @Path("/all")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAllGroupMembers() {
         List<GroupDTO> groupMembers = FACADE.getAllGroupMembersDTO();
-        if(groupMembers.size() > 0){
+        if (groupMembers.size() > 0) {
             return Response
                     .status(Response.Status.OK)
                     .entity(GSON.toJson(groupMembers))
                     .type(MediaType.APPLICATION_JSON)
-                    .build();                    
+                    .build();
         } else {
             return Response
                     .status(Response.Status.NOT_FOUND)
