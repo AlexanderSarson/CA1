@@ -1,5 +1,5 @@
-import { printTableArray } from "./html";
-import { getDataFromAPIAppendToContainer } from "./api";
+import { printTableArray } from "./html.js";
+import { getDataFromAPIAppendToContainer } from "./api.js";
 
 const markup = `
   <div>

@@ -1,6 +1,6 @@
-import { showMembers } from "./modules/members";
-import { showJokes } from "./modules/jokes";
-import { showCars } from "./modules/cars";
+import { showMembers } from "./modules/members.js";
+import { showJokes } from "./modules/jokes.js";
+import { showCars } from "./modules/cars.js";
 
 const rootContainer = document.querySelector("#root");
 const parentContainer = document.createElement("div");
