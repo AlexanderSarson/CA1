@@ -2,7 +2,7 @@ export const printTableArray = array => {
   let table = "<table align='center'>";
   table += "<tr>";
   for (let key of Object.keys(array[0])) {
-    table += `<th> ${key} </th>`;
+    table += `<th id=${key}> ${key} </th>`;
   }
   table += "</tr>";
   array.forEach(member => {
