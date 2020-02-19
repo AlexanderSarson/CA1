@@ -24,7 +24,7 @@ public class CarDTO {
         this.year = car.getYear();
         this.make = car.getMake();
         this.model = car.getModel();
-        this.price = car.getYear();
+        this.price = car.getPrice();
     }
 
     public long getId() {
