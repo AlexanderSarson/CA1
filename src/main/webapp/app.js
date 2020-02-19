@@ -1,42 +1,27 @@
-const rootDiv = document.querySelector("#root");
-const input = document.createElement("input");
-const userBtn = document.createElement("button");
-const getAllBtn = document.createElement("button");
+import { showMembers } from "./modules/members";
+import { showJokes } from "./modules/jokes";
+import { showCars } from "./modules/cars";
 
-userBtn.innerText = "Get Movie";
-getAllBtn.innerText = "Get all Movies";
+const rootContainer = document.querySelector("#root");
+const parentContainer = document.createElement("div");
+const container = document.createElement("div");
+const membersBtn = document.querySelector("#showMembers");
+const jokesBtn = document.querySelector("#showJokes");
+const carsBtn = document.querySelector("#showCars");
+rootContainer.append(parentContainer);
 
-document.body.appendChild(input);
-document.body.appendChild(userBtn);
-document.body.appendChild(getAllBtn);
-
-const getMovieByName = e => {
-  e.preventDefault();
-  rootDiv.innerHTML = "";
-  const p = document.createElement("p");
-  rootDiv.appendChild(p);
-  fetch(`api/movie/name/${input.value}`)
-    .then(response => {
-      return response.json();
-    })
-    .then(json => {
-      p.innerText = JSON.stringify(json, undefined, 2);
-    });
+const renderMembers = () => {
+  showMembers(parentContainer, container);
 };
 
-const getMovies = e => {
-  e.preventDefault();
-  rootDiv.innerHTML = "";
-  const p = document.createElement("p");
-  rootDiv.appendChild(p);
-  fetch(`api/movie/all`)
-    .then(response => {
-      return response.json();
-    })
-    .then(json => {
-      p.innerText = JSON.stringify(json, undefined, 2);
-    });
+const renderJokes = () => {
+  showJokes(parentContainer, container);
 };
 
-getAllBtn.addEventListener("click", getMovies);
-userBtn.addEventListener("click", getMovieByName);
+const renderCars = () => {
+  showCars(parentContainer, container);
+};
+
+membersBtn.addEventListener("click", renderMembers);
+jokesBtn.addEventListener("click", renderJokes);
+carsBtn.addEventListener("click", renderCars);
