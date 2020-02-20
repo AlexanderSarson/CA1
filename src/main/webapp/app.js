@@ -21,7 +21,7 @@ const renderJokes = () => {
 const renderCars = () => {
   showCars(parentContainer, container);
 };
-
+renderMembers();
 membersBtn.addEventListener("click", renderMembers);
 jokesBtn.addEventListener("click", renderJokes);
 carsBtn.addEventListener("click", renderCars);
