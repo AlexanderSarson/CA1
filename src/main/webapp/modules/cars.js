@@ -9,13 +9,13 @@ const markup = `
     <h1 align="center"> Cars!</h1>
     <button id="showAllCarsBtn">Show all cars</button>
     <div>
-      <p>Filter by year</p>
+      <p>Filter by minimum year</p>
       <input id="yearInput"></input>
       <p>Filter by make</p>
       <input id="makeInput"></input>
       <p>Filter by model</p>
       <input id="modelInput"></input>
-      <p>Filter by price</p>
+      <p>Filter by highest price</p>
       <input id="priceInput"></input>
       <div>
         <br>
@@ -87,7 +87,7 @@ const filterPrice = (carPrice, filterPrice) => {
 };
 
 const filterYear = (carYear, filterYear) => {
-  return filterYear === "" || carYear <= Number(filterYear) ? true : false;
+  return filterYear === "" || carYear >= Number(filterYear) ? true : false;
 };
 
 const filterMake = (carMake, filterMake) => {
