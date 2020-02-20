@@ -1,20 +1,35 @@
 import { printTableArray } from "./html.js";
-var cars;
+
+const state = {
+  cars: []
+};
 
 const markup = `
   <div>
+    <h1 align="center"> Cars!</h1>
     <button id="showAllCarsBtn">Show all cars</button>
     <div>
-      <button id="priceLowerThanBtn">Price lower than</button>
-      <input id="priceLowerThanInput"></input>
+      <p>Filter by year</p>
+      <input id="yearInput"></input>
+      <p>Filter by make</p>
+      <input id="makeInput"></input>
+      <p>Filter by model</p>
+      <input id="modelInput"></input>
+      <p>Filter by price</p>
+      <input id="priceInput"></input>
+      <div>
+        <br>
+        <button id="filterBtn">Apply filter</button>
+        <button id="clearFilterBtn">Clear filter</button>
+      </div>
     </div>
   </div>
 `;
 
 const getAllCarsUrl = "https://sarson.codes/CA1/api/cars/all";
 
-const sortCars = (sort, container) => {
-  let carsSorted = cars;
+const sortCars = (sort, container, carArr) => {
+  let carsSorted = carArr;
   switch (sort) {
     case "id":
       carsSorted.sort((a, b) => a.id - b.id);
@@ -39,10 +54,10 @@ const sortCars = (sort, container) => {
       break;
   }
   container.innerHTML = printTableArray(carsSorted);
-  addSortListeners(container);
+  addSortListeners(container, carsSorted);
 };
 
-const addSortListeners = container => {
+const addSortListeners = (container, carArr) => {
   const carId = document.querySelector("#id");
   const carYear = document.querySelector("#year");
   const carMake = document.querySelector("#make");
@@ -50,47 +65,82 @@ const addSortListeners = container => {
   const carPrice = document.querySelector("#price");
 
   carId.addEventListener("click", () => {
-    sortCars(carId.id, container);
+    sortCars(carId.id, container, carArr);
   });
 
   carYear.addEventListener("click", () => {
-    sortCars(carYear.id, container);
+    sortCars(carYear.id, container, carArr);
   });
   carMake.addEventListener("click", () => {
-    sortCars(carMake.id, container);
+    sortCars(carMake.id, container, carArr);
   });
   carModel.addEventListener("click", () => {
-    sortCars(carModel.id, container);
+    sortCars(carModel.id, container, carArr);
   });
   carPrice.addEventListener("click", () => {
-    sortCars(carPrice.id, container);
+    sortCars(carPrice.id, container, carArr);
   });
 };
 
-const filterPrice = (array, search) => {
+const filterPrice = (carPrice, filterPrice) => {
+  return filterPrice === "" || carPrice <= Number(filterPrice) ? true : false;
+};
+
+const filterYear = (carYear, filterYear) => {
+  return filterYear === "" || carYear <= Number(filterYear) ? true : false;
+};
+
+const filterMake = (carMake, filterMake) => {
+  return filterMake === "" ||
+    carMake.toLowerCase().includes(filterMake.toLowerCase())
+    ? true
+    : false;
+};
+
+const filterModel = (carModel, filterModel) => {
+  return filterModel === "" ||
+    carModel.toLowerCase().includes(filterModel.toLowerCase())
+    ? true
+    : false;
+};
+
+const filterHandler = (carArr, container) => {
+  const yearInput = document.querySelector("#yearInput").value;
+  const makeInput = document.querySelector("#makeInput").value;
+  const modelInput = document.querySelector("#modelInput").value;
+  const priceInput = document.querySelector("#priceInput").value;
   let html;
-  let carFilter = array.filter(({ price }) => {
-    return Number(price) < Number(search) ? true : false;
+  let carFilter = carArr.filter(({ year, make, model, price }) => {
+    return (
+      filterPrice(price, priceInput) &&
+      filterYear(year, yearInput) &&
+      filterMake(make, makeInput) &&
+      filterModel(model, modelInput)
+    );
   });
+
   if (carFilter.length > 0) {
-    html = `<h1 align="center"> Cars available under ${search}</h1>
-    ${printTableArray(carFilter)}`;
+    html = printTableArray(carFilter);
   } else {
-    html = `<h1 align="center"> No cars available under ${search}</h1>`;
+    html = `<h1 align="center"> No cars available</h1>`;
   }
-  return html;
+  container.innerHTML = html;
+  return carFilter;
 };
 
 const addListeners = container => {
   const showAllCarsBtn = document.querySelector("#showAllCarsBtn");
-  const priceLowerThanBtn = document.querySelector("#priceLowerThanBtn");
-  const priceLowerThanInput = document.querySelector("#priceLowerThanInput");
+  const filterBtn = document.querySelector("#filterBtn");
+  const clearFilterBtn = document.querySelector("#clearFilterBtn");
 
+  clearFilterBtn.addEventListener("click", () => {
+    showAllCars(container);
+  });
   showAllCarsBtn.addEventListener("click", () => {
     showAllCars(container);
   });
-  priceLowerThanBtn.addEventListener("click", () => {
-    priceLowerThan(container, priceLowerThanInput.value);
+  filterBtn.addEventListener("click", () => {
+    filter(container);
   });
 };
 
@@ -101,21 +151,17 @@ const getDataFromAPIAppendToContainer = (url, div, callback, ...args) => {
     })
     .then(json => {
       div.innerHTML = callback(json, args);
-      cars = json;
-      addSortListeners(div);
+      state.cars = json;
+      addSortListeners(div, json);
     });
 };
 
 const showAllCars = container => {
   getDataFromAPIAppendToContainer(getAllCarsUrl, container, printTableArray);
 };
-const priceLowerThan = (container, search) => {
-  getDataFromAPIAppendToContainer(
-    getAllCarsUrl,
-    container,
-    filterPrice,
-    search
-  );
+
+const filter = container => {
+  addSortListeners(container, filterHandler(state.cars, container));
 };
 
 export const showCars = (parentContainer, container) => {
@@ -123,4 +169,5 @@ export const showCars = (parentContainer, container) => {
   parentContainer.innerHTML = markup;
   parentContainer.appendChild(container);
   addListeners(container);
+  showAllCars(container);
 };
