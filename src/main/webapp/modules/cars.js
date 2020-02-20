@@ -134,6 +134,10 @@ const addListeners = container => {
   const clearFilterBtn = document.querySelector("#clearFilterBtn");
 
   clearFilterBtn.addEventListener("click", () => {
+    document.querySelector("#yearInput").value = "";
+    document.querySelector("#makeInput").value = "";
+    document.querySelector("#modelInput").value = "";
+    document.querySelector("#priceInput").value = "";
     showAllCars(container);
   });
   showAllCarsBtn.addEventListener("click", () => {
